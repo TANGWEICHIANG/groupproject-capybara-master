@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: zookeeper
+    #    container_name: zookeeper
+    networks:
+      - broker-kafka
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ALLOW_ANONYMOUS_LOGIN: yes
+    volumes:
+      - ./bitnami/zookeeper:/bitnami/zookeeper
+
+  kafka:
+    image: confluentinc/cp-kafka:4.1.0
+    #    container_name: kafka
+    networks:
+      - broker-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    expose:
+      - "9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    volumes:
+      - ./bitnami/kafka:/bitnami/kafka
+
+  mysql:
+    image: mysql:latest
+    #    container_name: capybara_mysql
+    networks:
+      - broker-kafka
+    environment:
+      MYSQL_ROOT_PASSWORD: wctang0109
+      MYSQL_DATABASE: capybara_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  capybara-app:
+    build: .
+    image: capybara_app:latest
+    ports:
+      - "8081:8081"
+    depends_on:
+      - kafka
+      - zookeeper
+      - mysql
+    networks:
+      - broker-kafka
+
+networks:
+  broker-kafka:
+    driver: bridge

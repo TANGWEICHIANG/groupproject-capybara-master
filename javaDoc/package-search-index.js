@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"my.uum"},{"l":"my.uum.config"},{"l":"my.uum.entity"},{"l":"my.uum.github"},{"l":"my.uum.jpa"},{"l":"my.uum.kafka"},{"l":"my.uum.telegram"}];updateSearchResults();
