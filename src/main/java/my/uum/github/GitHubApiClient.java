@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
  */
 public class GitHubApiClient {
 
-    private static final String GITHUB_TOKEN = "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";
+    private static final String GITHUB_TOKEN = "your github token";
 
     /**
      * Fetches GitHub issues from the specified URL.
